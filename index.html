@@ -294,6 +294,16 @@
             box-shadow: 0 5px 15px rgba(216,27,96,0.1);
         }
 
+        /* لو اللغة إنجليزي نخلي الأيقونة على الشمال */
+        html[dir="ltr"] .search-input-wrap i {
+            right: auto;
+            left: 15px;
+        }
+
+        html[dir="ltr"] .search-input {
+            padding: 12px 15px 12px 45px;
+        }
+
         /* =========================
            FLOATING CHECKOUT
         ========================= */
@@ -504,6 +514,7 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             min-width: 0;
+            cursor: pointer;
             transition: transform .25s ease, box-shadow .25s ease;
         }
 
@@ -583,6 +594,129 @@
 
         .add-cart-btn:hover {
             background: #b91450;
+        }
+
+        /* =========================
+           PRODUCT MODAL (تكبير المنتج)
+        ========================= */
+
+        #product-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0,0,0,.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity .25s ease;
+        }
+
+        #product-modal.open {
+            display: flex;
+        }
+
+        #product-modal.visible {
+            opacity: 1;
+        }
+
+        .modal-card {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 18px;
+            padding: 20px 20px 22px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            transform: scale(.85);
+            transition: transform .25s ease;
+        }
+
+        #product-modal.visible .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: #ffe6ee;
+            color: var(--deep-pink);
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--deep-pink);
+            color: #fff;
+        }
+
+        .modal-image-wrap {
+            width: 100%;
+            height: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 12px;
+            margin-bottom: 14px;
+        }
+
+        .modal-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-image-wrap i {
+            font-size: 120px;
+            color: var(--primary-pink);
+        }
+
+        .modal-name {
+            font-size: 19px;
+            font-weight: 800;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .modal-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .modal-price .old-price {
+            font-size: 15px;
+        }
+
+        .modal-price .new-price {
+            font-size: 20px;
+            padding: 2px 8px;
+        }
+
+        .modal-card .add-cart-btn {
+            padding: 13px 10px;
+            font-size: 15px;
+            border-radius: 10px;
         }
 
         /* =========================
@@ -692,18 +826,6 @@
             flex-shrink: 0;
         }
 
-        .shipping-note {
-            background: #fff8fa;
-            border: 1px dashed var(--deep-pink);
-            color: var(--deep-pink);
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 15px;
-            text-align: center;
-        }
-
         .cart-total {
             border-top: 1px solid #eee;
             margin-top: 15px;
@@ -711,12 +833,25 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
             font-size: 18px;
             font-weight: 900;
         }
 
-        .cart-total span:last-child {
+        .cart-total-value {
             color: var(--deep-pink);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 6px;
+            text-align: end;
+        }
+
+        .ship-plus {
+            font-size: 13px;
+            font-weight: 700;
+            color: #8a6d2f;
         }
 
         .checkout-btn {
@@ -1056,6 +1191,22 @@
                 border-radius: 5px;
             }
 
+            .modal-card {
+                padding: 16px 14px 18px;
+            }
+
+            .modal-image-wrap {
+                height: 290px;
+            }
+
+            .modal-name {
+                font-size: 16px;
+            }
+
+            .modal-card .add-cart-btn {
+                font-size: 13px;
+            }
+
             .cart-box,
             .checkout-box {
                 padding: 15px;
@@ -1076,6 +1227,14 @@
             }
 
             .cart-item-price {
+                font-size: 11px;
+            }
+
+            .cart-total {
+                font-size: 15px;
+            }
+
+            .ship-plus {
                 font-size: 11px;
             }
 
@@ -1154,7 +1313,8 @@
         </div>
     </navbar>
 
-    <button id="floating-checkout" onclick="showCheckout()">
+    <!-- الزرار العائم: بيودّي للسلة -->
+    <button id="floating-checkout" onclick="showCart()">
         <i class="fa-solid fa-bag-shopping"></i>
         <span id="floating-checkout-text" data-translate="checkout">إتمام الطلب</span>
         <span id="floating-cart-number">0</span>
@@ -1176,7 +1336,7 @@
                 <div class="search-container">
                     <div class="search-input-wrap">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="general-search-input" class="search-input" placeholder="ابحث عن أي منتج..." oninput="handleGeneralSearch(this.value)">
+                        <input type="text" id="general-search-input" class="search-input" data-placeholder="searchAll" placeholder="ابحث عن أي منتج..." oninput="handleGeneralSearch(this.value)">
                     </div>
                 </div>
 
@@ -1221,7 +1381,7 @@
             <div class="search-container" style="margin-bottom: 25px;">
                 <div class="search-input-wrap">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="category-search-input" class="search-input" placeholder="ابحث داخل هذا القسم..." oninput="handleCategorySearch(this.value)">
+                    <input type="text" id="category-search-input" class="search-input" data-placeholder="searchCategory" placeholder="ابحث داخل هذا القسم..." oninput="handleCategorySearch(this.value)">
                 </div>
             </div>
 
@@ -1243,13 +1403,12 @@
             <div class="cart-box">
                 <div class="cart-items" id="cart-items"></div>
 
-                <div class="shipping-note" data-translate="shippingNote">
-                    📦 ملاحظة: فلوس الأوردر + مصاريف شحن
-                </div>
-
                 <div class="cart-total">
                     <span data-translate="total">الإجمالي</span>
-                    <span id="cart-total-price">0 EGP</span>
+                    <span class="cart-total-value">
+                        <span id="cart-total-price">0 EGP</span>
+                        <span class="ship-plus" id="ship-plus" data-translate="shippingPlus">+ مصاريف الشحن</span>
+                    </span>
                 </div>
 
                 <button class="checkout-btn" id="checkout-button" onclick="showCheckout()">
@@ -1274,17 +1433,17 @@
             <div class="checkout-box">
                 <div class="form-group">
                     <label for="customer-name" data-translate="name">الاسم</label>
-                    <input id="customer-name" type="text" placeholder="اكتب اسمك">
+                    <input id="customer-name" type="text" data-placeholder="namePlaceholder" placeholder="اكتب اسمك">
                 </div>
 
                 <div class="form-group">
                     <label for="customer-phone" data-translate="phone">رقم الهاتف</label>
-                    <input id="customer-phone" type="tel" placeholder="اكتب رقم الهاتف">
+                    <input id="customer-phone" type="tel" data-placeholder="phonePlaceholder" placeholder="اكتب رقم الهاتف">
                 </div>
 
                 <div class="form-group">
                     <label for="customer-address" data-translate="address">العنوان</label>
-                    <textarea id="customer-address" placeholder="اكتب العنوان بالتفصيل"></textarea>
+                    <textarea id="customer-address" data-placeholder="addressPlaceholder" placeholder="اكتب العنوان بالتفصيل"></textarea>
                 </div>
 
                 <div class="payment-title" data-translate="paymentTitle">طريقة الدفع</div>
@@ -1310,6 +1469,19 @@
             </div>
         </div>
     </section>
+
+    <!-- PRODUCT MODAL -->
+    <div id="product-modal" onclick="closeProductModal(event)">
+        <div class="modal-card" id="modal-card">
+            <button class="modal-close" onclick="closeProductModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-image-wrap" id="modal-image-wrap"></div>
+            <div class="modal-name" id="modal-name"></div>
+            <div class="modal-price" id="modal-price"></div>
+            <button class="add-cart-btn" id="modal-add-btn" onclick="addFromModal(this)"></button>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer id="footer">
@@ -1354,8 +1526,15 @@
                 addToCart: "أضف للسلة",
                 emptyCart: "السلة فاضية",
                 productAdded: "تمت الإضافة ✓",
-                shippingNote: "📦 ملاحظة: فلوس الأوردر + مصاريف شحن",
-                amountText: "الكمية: "
+                shippingPlus: "+ مصاريف الشحن",
+                amountText: "الكمية: ",
+                searchAll: "ابحث عن أي منتج...",
+                searchCategory: "ابحث داخل هذا القسم...",
+                namePlaceholder: "اكتب اسمك",
+                phonePlaceholder: "اكتب رقم الهاتف",
+                addressPlaceholder: "اكتب العنوان بالتفصيل",
+                searchResults: "نتائج البحث",
+                noResults: "لا توجد منتجات مطابقة للبحث"
             },
             en: {
                 home: "Home",
@@ -1380,14 +1559,24 @@
                 addToCart: "Add to Cart",
                 emptyCart: "Your cart is empty",
                 productAdded: "Added ✓",
-                shippingNote: "📦 Note: Order cost + Shipping fees",
-                amountText: "Amount: "
+                shippingPlus: "+ Shipping fees",
+                amountText: "Amount: ",
+                searchAll: "Search for any product...",
+                searchCategory: "Search in this category...",
+                namePlaceholder: "Enter your name",
+                phonePlaceholder: "Enter your phone number",
+                addressPlaceholder: "Enter your full address",
+                searchResults: "Search Results",
+                noResults: "No matching products found"
             }
         };
 
         let currentLang = "ar";
         let cart = [];
+        let currentProducts = [];   // المنتجات المعروضة حاليًا (للمودال)
+        let modalProduct = null;    // المنتج المفتوح في المودال
         window.activeCategoryName = "";
+        window.searchMode = false;
 
         const koreanProducts = [
             { name: "Arencia Vitamin C Booster Shot 30ml", image: "https://i.postimg.cc/Hk1sgjn6/8f7fc898-5120-45ed-a68c-70b677351b64.jpg", oldPrice: 1200, newPrice: 899 },
@@ -1485,6 +1674,16 @@
             return true;
         }
 
+        // تحديث الـ placeholders حسب اللغة
+        function applyPlaceholders() {
+            document.querySelectorAll("[data-placeholder]").forEach(function(el) {
+                const key = el.getAttribute("data-placeholder");
+                if (translations[currentLang][key]) {
+                    el.placeholder = translations[currentLang][key];
+                }
+            });
+        }
+
         function toggleLanguage() {
             currentLang = currentLang === "ar" ? "en" : "ar";
             const htmlRoot = document.getElementById("html-root");
@@ -1498,31 +1697,60 @@
                 }
             });
 
+            applyPlaceholders();
+
             document.getElementById("language-btn-text").innerText = currentLang === "ar" ? "EN" : "AR";
             document.getElementById("payment-insta-text").innerText = translations[currentLang].paymentInsta;
             document.getElementById("payment-cash-text").innerText = translations[currentLang].paymentCash;
             document.getElementById("floating-checkout-text").innerText = translations[currentLang].checkout;
 
-            if (window.activeCategoryName && document.getElementById("products-page").style.display === "block") {
-                openCategory(window.activeCategoryName);
+            const productsVisible = document.getElementById("products-page").style.display === "block";
+            if (productsVisible) {
+                if (window.searchMode) {
+                    // نحافظ على نتائج البحث ونحدّث العنوان والنصوص بس
+                    document.getElementById("category-title").innerText = translations[currentLang].searchResults;
+                    const q = document.getElementById("general-search-input").value;
+                    handleGeneralSearch(q, true);
+                } else if (window.activeCategoryName) {
+                    const q = document.getElementById("category-search-input").value;
+                    openCategory(window.activeCategoryName, true);
+                    document.getElementById("category-search-input").value = q;
+                    handleCategorySearch(q);
+                }
             }
+
+            // لو المودال مفتوح نحدّث زرار الإضافة
+            if (modalProduct) {
+                document.getElementById("modal-add-btn").innerHTML =
+                    '<i class="fa-solid fa-cart-plus"></i> ' + translations[currentLang].addToCart;
+            }
+
             updateCart();
         }
 
-        function showHome() {
-            document.getElementById("home-page").style.display = "block";
+        function hideAllPages() {
+            document.getElementById("home-page").style.display = "none";
             document.getElementById("products-page").style.display = "none";
             document.getElementById("cart-page").style.display = "none";
             document.getElementById("checkout-page").style.display = "none";
+        }
+
+        function showHome() {
+            closeProductModal();
+            window.searchMode = false;
+            hideAllPages();
+            document.getElementById("home-page").style.display = "block";
             document.getElementById("general-search-input").value = "";
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        function handleGeneralSearch(query) {
-            query = query.trim();
-            if (!query) return;
-            
-            // Collect all products
+        function handleGeneralSearch(query, keepScroll) {
+            query = (query || "").trim();
+            if (!query) {
+                if (window.searchMode) showHome();
+                return;
+            }
+
             let allProds = [...koreanProducts];
             for (let cat in categoryProducts) {
                 categoryProducts[cat].forEach(p => {
@@ -1536,19 +1764,23 @@
             }
 
             let filtered = allProds.filter(p => matchQuery(p.name, query));
-            
-            // Switch to products page view dynamically for search results
-            document.getElementById("home-page").style.display = "none";
-            document.getElementById("cart-page").style.display = "none";
-            document.getElementById("checkout-page").style.display = "none";
+
+            window.searchMode = true;
+            hideAllPages();
             document.getElementById("products-page").style.display = "block";
-            document.getElementById("category-title").innerText = currentLang === "ar" ? "نتائج البحث" : "Search Results";
-            
+            document.getElementById("category-title").innerText = translations[currentLang].searchResults;
+            document.getElementById("category-search-input").value = "";
+
             renderProductsGrid(filtered);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            if (!keepScroll) window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
         function handleCategorySearch(query) {
+            if (window.searchMode) {
+                // وإحنا في نتائج البحث العام، بحث القسم يفلتر نفس البحث العام
+                handleGeneralSearch(document.getElementById("general-search-input").value, true);
+                return;
+            }
             let products = window.activeCategoryName === "Korean" ? koreanProducts : (categoryProducts[window.activeCategoryName] || []);
             let formattedProducts = products.map(p => ({
                 name: p.name,
@@ -1561,11 +1793,11 @@
             renderProductsGrid(filtered);
         }
 
-        function openCategory(categoryName) {
+        function openCategory(categoryName, keepScroll) {
+            closeProductModal();
+            window.searchMode = false;
             window.activeCategoryName = categoryName;
-            document.getElementById("home-page").style.display = "none";
-            document.getElementById("cart-page").style.display = "none";
-            document.getElementById("checkout-page").style.display = "none";
+            hideAllPages();
             document.getElementById("products-page").style.display = "block";
             document.getElementById("category-title").innerText = categoryName;
             document.getElementById("category-search-input").value = "";
@@ -1579,59 +1811,116 @@
             }));
 
             renderProductsGrid(formattedProducts);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            if (!keepScroll) window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
         function renderProductsGrid(products) {
+            currentProducts = products;
             const productsGrid = document.getElementById("products-grid");
             productsGrid.innerHTML = "";
 
             if (products.length === 0) {
-                productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 30px;">${currentLang === 'ar' ? 'لا توجد منتجات مطابقة للبحث' : 'No matching products found'}</p>`;
+                productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 30px;">${translations[currentLang].noResults}</p>`;
                 return;
             }
 
-            products.forEach(function(product) {
-                let productHTML = "";
-                if (product.image) {
-                    productHTML = `
-                        <div class="product-card">
-                            <div class="product-image-wrap">
-                                <img src="${product.image}" alt="${product.name}" loading="lazy">
+            products.forEach(function(product, index) {
+                const imageBlock = product.image
+                    ? `<div class="product-image-wrap"><img src="${product.image}" alt="${product.name}" loading="lazy"></div>`
+                    : `<div class="product-image-wrap" style="display:flex; align-items:center; justify-content:center; background:#fff5f8;">
+                            <i class="fa-solid fa-heart" style="font-size:65px; color:#ffb6c1;"></i>
+                       </div>`;
+
+                const oldPriceHTML = product.oldPrice ? `<span class="old-price">${product.oldPrice} EGP</span>` : '';
+
+                const productHTML = `
+                    <div class="product-card" onclick="openProductModal(${index})">
+                        ${imageBlock}
+                        <div class="product-info">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">
+                                ${oldPriceHTML}
+                                <span class="new-price">${product.newPrice} EGP</span>
                             </div>
-                            <div class="product-info">
-                                <div class="product-name">${product.name}</div>
-                                <div class="product-price">
-                                    ${product.oldPrice ? `<span class="old-price">${product.oldPrice} EGP</span>` : ''}
-                                    <span class="new-price">${product.newPrice} EGP</span>
-                                </div>
-                                <button class="add-cart-btn" onclick='addToCart(${JSON.stringify(product.name)}, ${product.newPrice}, ${JSON.stringify(product.image)}, this)'>
-                                    <i class="fa-solid fa-cart-plus"></i> ${translations[currentLang].addToCart}
-                                </button>
-                            </div>
+                            <button class="add-cart-btn" onclick="event.stopPropagation(); addToCartByIndex(${index}, this)">
+                                <i class="fa-solid fa-cart-plus"></i> ${translations[currentLang].addToCart}
+                            </button>
                         </div>
-                    `;
-                } else {
-                    productHTML = `
-                        <div class="product-card">
-                            <div class="product-image-wrap" style="display:flex; align-items:center; justify-content:center; background:#fff5f8;">
-                                <i class="fa-solid fa-heart" style="font-size:65px; color:#ffb6c1;"></i>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">${product.name}</div>
-                                <div class="product-price">
-                                    <span class="new-price">${product.newPrice} EGP</span>
-                                </div>
-                                <button class="add-cart-btn" onclick='addToCart(${JSON.stringify(product.name)}, ${product.newPrice}, "", this)'>
-                                    <i class="fa-solid fa-cart-plus"></i> ${translations[currentLang].addToCart}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }
+                    </div>
+                `;
                 productsGrid.insertAdjacentHTML("beforeend", productHTML);
             });
         }
+
+        /* =========================
+           PRODUCT MODAL
+        ========================= */
+
+        function openProductModal(index) {
+            const product = currentProducts[index];
+            if (!product) return;
+            modalProduct = product;
+
+            const imgWrap = document.getElementById("modal-image-wrap");
+            if (product.image) {
+                imgWrap.innerHTML = `<img src="${product.image}" alt="${product.name}">`;
+            } else {
+                imgWrap.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+            }
+
+            document.getElementById("modal-name").innerText = product.name;
+
+            document.getElementById("modal-price").innerHTML =
+                (product.oldPrice ? `<span class="old-price">${product.oldPrice} EGP</span>` : '') +
+                `<span class="new-price">${product.newPrice} EGP</span>`;
+
+            document.getElementById("modal-add-btn").innerHTML =
+                '<i class="fa-solid fa-cart-plus"></i> ' + translations[currentLang].addToCart;
+
+            const modal = document.getElementById("product-modal");
+            modal.classList.add("open");
+            document.body.style.overflow = "hidden";
+            // نستنى فريم عشان الأنيميشن يشتغل
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    modal.classList.add("visible");
+                });
+            });
+        }
+
+        function closeProductModal(event) {
+            // لو الضغطة جوه الكارت نفسه متقفلش
+            if (event && event.target && event.target.id !== "product-modal") return;
+            const modal = document.getElementById("product-modal");
+            if (!modal.classList.contains("open")) return;
+            modal.classList.remove("visible");
+            modalProduct = null;
+            document.body.style.overflow = "";
+            setTimeout(function() {
+                if (!modal.classList.contains("visible")) {
+                    modal.classList.remove("open");
+                }
+            }, 250);
+        }
+
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") closeProductModal();
+        });
+
+        function addFromModal(button) {
+            if (!modalProduct) return;
+            addToCart(modalProduct.name, modalProduct.newPrice, modalProduct.image || "", button);
+        }
+
+        function addToCartByIndex(index, button) {
+            const p = currentProducts[index];
+            if (!p) return;
+            addToCart(p.name, p.newPrice, p.image || "", button);
+        }
+
+        /* =========================
+           CART
+        ========================= */
 
         function addToCart(name, price, image, button) {
             let existingItem = cart.find(item => item.name === name);
@@ -1656,7 +1945,7 @@
                 button.innerHTML = '<i class="fa-solid fa-check"></i> ' + translations[currentLang].productAdded;
                 button.disabled = true;
                 setTimeout(function() {
-                    button.innerHTML = originalHTML;
+                    button.innerHTML = '<i class="fa-solid fa-cart-plus"></i> ' + translations[currentLang].addToCart;
                     button.disabled = false;
                 }, 900);
             }
@@ -1687,6 +1976,8 @@
             const cartItems = document.getElementById("cart-items");
             if (!cartItems) return;
 
+            const shipPlus = document.getElementById("ship-plus");
+
             if (cart.length === 0) {
                 cartItems.innerHTML = `
                     <div class="empty-cart">
@@ -1695,10 +1986,12 @@
                     </div>
                 `;
                 document.getElementById("cart-total-price").innerText = "0 EGP";
+                if (shipPlus) shipPlus.style.display = "none";
                 document.getElementById("checkout-button").style.display = "none";
                 return;
             }
 
+            if (shipPlus) shipPlus.style.display = "";
             document.getElementById("checkout-button").style.display = "block";
             let total = 0;
             cartItems.innerHTML = "";
@@ -1737,9 +2030,8 @@
         }
 
         function showCart() {
-            document.getElementById("home-page").style.display = "none";
-            document.getElementById("products-page").style.display = "none";
-            document.getElementById("checkout-page").style.display = "none";
+            closeProductModal();
+            hideAllPages();
             document.getElementById("cart-page").style.display = "block";
             updateCart();
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1747,9 +2039,8 @@
 
         function showCheckout() {
             if (cart.length === 0) return;
-            document.getElementById("home-page").style.display = "none";
-            document.getElementById("products-page").style.display = "none";
-            document.getElementById("cart-page").style.display = "none";
+            closeProductModal();
+            hideAllPages();
             document.getElementById("checkout-page").style.display = "block";
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
@@ -1770,8 +2061,11 @@
                 return `- ${item.name} (الكمية: ${item.quantity}) - ${item.price * item.quantity} EGP`;
             }).join("\n");
 
+            const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
             const message = `مرحباً، اريد طلب المنتجات الآتية:\n` +
                             `${orderDetails}\n\n` +
+                            `الإجمالي: ${total} EGP + مصاريف الشحن\n\n` +
                             `الاسم: ${name}\n` +
                             `الهاتف: ${phone}\n` +
                             `العنوان: ${address}\n` +
@@ -1782,6 +2076,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
+            applyPlaceholders();
             updateCart();
         });
     </script>
