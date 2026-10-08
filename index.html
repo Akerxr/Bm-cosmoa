@@ -1741,6 +1741,7 @@
             hideAllPages();
             document.getElementById("home-page").style.display = "block";
             document.getElementById("general-search-input").value = "";
+            refreshFloating();
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
@@ -1772,6 +1773,7 @@
             document.getElementById("category-search-input").value = "";
 
             renderProductsGrid(filtered);
+            refreshFloating();
             if (!keepScroll) window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
@@ -1811,6 +1813,7 @@
             }));
 
             renderProductsGrid(formattedProducts);
+            refreshFloating();
             if (!keepScroll) window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
@@ -1938,7 +1941,6 @@
             }
 
             updateCart();
-            document.getElementById("floating-checkout").classList.add("show");
 
             if (button) {
                 const originalHTML = button.innerHTML;
@@ -1959,6 +1961,20 @@
             }
         }
 
+        // الزرار العائم يظهر بس لو في منتجات في السلة ومش واقفين في السلة أو صفحة الطلب
+        function refreshFloating() {
+            const btn = document.getElementById("floating-checkout");
+            if (!btn) return;
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const inCart = document.getElementById("cart-page").style.display === "block";
+            const inCheckout = document.getElementById("checkout-page").style.display === "block";
+            if (count > 0 && !inCart && !inCheckout) {
+                btn.classList.add("show");
+            } else {
+                btn.classList.remove("show");
+            }
+        }
+
         function updateCart() {
             let totalCount = 0;
             cart.forEach(item => totalCount += item.quantity);
@@ -1966,12 +1982,7 @@
             document.getElementById("cart-count").innerText = totalCount;
             document.getElementById("floating-cart-number").innerText = totalCount;
 
-            const floatingCheckout = document.getElementById("floating-checkout");
-            if (totalCount > 0) {
-                floatingCheckout.classList.add("show");
-            } else {
-                floatingCheckout.classList.remove("show");
-            }
+            refreshFloating();
 
             const cartItems = document.getElementById("cart-items");
             if (!cartItems) return;
@@ -2042,6 +2053,7 @@
             closeProductModal();
             hideAllPages();
             document.getElementById("checkout-page").style.display = "block";
+            refreshFloating();
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
